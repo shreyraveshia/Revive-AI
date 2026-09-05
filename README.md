@@ -1,8 +1,5 @@
-Absolutely. Since this is the **final GitHub README for the Buildathon**, I’d make it judge-oriented: clear problem, architecture, AI/ML approach, safety, Razorpay integration, evaluation, setup, and demo flow.
 
-Replace the entire root `README.md` with this:
 
-````markdown
 # Revive AI
 
 ### AI-Powered Revenue Recovery & Next-Best-Action Engine
