@@ -498,3 +498,64 @@ td {
     grid-template-columns: 90px 1fr 45px;
   }
 }
+
+.execution-box {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+}
+
+.execution-box p {
+  margin: 9px 0 14px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.execute-button {
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: #111827;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.execute-button:hover {
+  opacity: 0.92;
+}
+
+.execute-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.simulation-badge {
+  display: inline-flex;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.execution-success {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 9px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 12px;
+}
+
+.execution-success a {
+  display: block;
+  margin-top: 5px;
+  color: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+}

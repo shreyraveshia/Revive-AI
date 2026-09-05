@@ -20,10 +20,15 @@ def get_metrics():
         ) or 0
 
         recovered_revenue = db.scalar(
-            select(func.coalesce(func.sum(RecoveryOutcome.amount_recovered_paise), 0)).where(
-                RecoveryOutcome.status == "recovered"
+            select(
+                func.coalesce(
+                    func.sum(RecoveryOutcome.amount_recovered_paise),
+            0,
+                )
+            ).where(
+                func.upper(RecoveryOutcome.status) == "RECOVERED"
             )
-        ) or 0
+) or 0
 
         executed_actions = db.scalar(
             select(func.count(RecoveryAction.id)).where(
@@ -37,7 +42,7 @@ def get_metrics():
 
         recovered_outcomes = db.scalar(
             select(func.count(RecoveryOutcome.id)).where(
-                RecoveryOutcome.status == "recovered"
+                func.upper(RecoveryOutcome.status) == "RECOVERED"
             )
         ) or 0
 
@@ -79,12 +84,12 @@ def get_recovery_actions(limit: int = 50):
                 "transaction_id": action.transaction_id,
                 "order_id": order_id,
                 "amount_paise": amount,
-                "action": action.action_type,
+                "action": str(action.action_type).lower(),
                 "reason": action.decision_reason,
                 "expected_recovery_probability": action.expected_recovery_probability,
                 "expected_value_paise": action.expected_value_paise,
-                "status": action.status,
-                "transaction_status": transaction_status,
+                "status": str(action.status).lower(),
+                "transaction_status": str(transaction_status).lower(),
                 "created_at": action.created_at,
                 "executed_at": action.executed_at,
             }
