@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from app.api.dashboard import get_metrics, get_recovery_actions
 from fastapi import APIRouter, HTTPException
 
 from app.api.schemas import (
@@ -17,6 +17,20 @@ router = APIRouter(
     prefix="/api",
     tags=["recovery"],
 )
+
+@router.get("/metrics")
+def metrics():
+    return get_metrics()
+
+
+@router.get("/recovery/actions")
+def recovery_actions(limit: int = 50):
+    limit = max(1, min(limit, 100))
+    return get_recovery_actions(limit)
+
+
+
+
 
 
 @router.post(
