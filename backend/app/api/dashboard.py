@@ -47,8 +47,8 @@ def get_metrics():
         ) or 0
 
         recovery_rate = (
-            recovered_outcomes / total_recovery_outcomes
-            if total_recovery_outcomes
+            recovered_revenue / revenue_at_risk
+            if revenue_at_risk
             else 0.0
         )
 

@@ -559,3 +559,117 @@ td {
   font-weight: 800;
   text-decoration: underline;
 }
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.funnel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  padding: 24px;
+}
+
+.funnel-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 82px;
+  padding-right: 36px;
+}
+
+.funnel-number {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.funnel-value {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.funnel-label {
+  margin-top: 4px;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.funnel-arrow {
+  position: absolute;
+  right: 8px;
+  color: #9ca3af;
+  font-size: 22px;
+}
+
+.action-mix {
+  padding: 22px 24px 26px;
+}
+
+.mix-row {
+  display: grid;
+  grid-template-columns: 105px 1fr 24px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.mix-action {
+  color: #374151;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.mix-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eef0f3;
+}
+
+.mix-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #111827;
+}
+
+.mix-count {
+  text-align: right;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .funnel {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .funnel-step {
+    padding-right: 0;
+  }
+
+  .funnel-arrow {
+    display: none;
+  }
+}

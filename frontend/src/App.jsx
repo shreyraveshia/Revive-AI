@@ -124,6 +124,8 @@ function App() {
 
       const result = await response.json();
       setDecision(result);
+
+      await loadDashboard();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -178,6 +180,32 @@ function App() {
   const canExecutePaymentLink =
     decision?.selected_action === "payment_link";
 
+  const actionMix = actions.reduce((acc, item) => {
+    acc[item.action] = (acc[item.action] || 0) + 1;
+    return acc;
+  }, {});
+
+  const funnel = [
+    {
+      label: "Revenue at Risk",
+      value: metrics
+        ? formatRupees(metrics.revenue_at_risk_paise)
+        : "—",
+    },
+    {
+      label: "Actions Executed",
+      value: metrics
+        ? String(metrics.executed_actions)
+        : "—",
+    },
+    {
+      label: "Revenue Recovered",
+      value: metrics
+        ? formatRupees(metrics.recovered_revenue_paise)
+        : "—",
+    },
+  ];
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -197,15 +225,18 @@ function App() {
 
       <main className="dashboard">
         <section className="hero">
-          <p className="eyebrow">REVENUE RECOVERY CONTROL CENTER</p>
+          <p className="eyebrow">
+            REVENUE RECOVERY CONTROL CENTER
+          </p>
 
           <h1>
             Recover more revenue with the next best action.
           </h1>
 
           <p className="hero-copy">
-            Revive detects failed payments, diagnoses the failure, predicts
-            recovery outcomes, and selects a bounded intervention.
+            Revive detects failed payments, diagnoses the failure,
+            predicts recovery outcomes, and selects a bounded
+            intervention.
           </p>
         </section>
 
@@ -215,6 +246,7 @@ function App() {
           </div>
         )}
 
+        {/* KPI CARDS */}
         <section className="stats-grid">
           <StatCard
             label="Revenue at Risk"
@@ -240,7 +272,9 @@ function App() {
 
           <StatCard
             label="Actions Executed"
-            value={metrics?.executed_actions ?? "—"}
+            value={
+              metrics?.executed_actions ?? "—"
+            }
             subtext="Bounded recovery interventions"
           />
 
@@ -248,19 +282,125 @@ function App() {
             label="Recovery Rate"
             value={
               metrics
-                ? `${(metrics.recovery_rate * 100).toFixed(1)}%`
+                ? `${(
+                    metrics.recovery_rate * 100
+                  ).toFixed(1)}%`
                 : "—"
             }
             subtext="Verified recovery outcomes"
           />
         </section>
 
+        {/* RECOVERY INSIGHTS */}
+        <section className="insights-grid">
+          <div className="panel">
+            <div className="panel-header">
+              <div>
+                <p className="eyebrow">
+                  RECOVERY FUNNEL
+                </p>
+
+                <h2>
+                  From risk to recovered revenue
+                </h2>
+              </div>
+            </div>
+
+            <div className="funnel">
+              {funnel.map((step, index) => (
+                <div
+                  className="funnel-step"
+                  key={step.label}
+                >
+                  <div className="funnel-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+
+                  <div>
+                    <div className="funnel-value">
+                      {step.value}
+                    </div>
+
+                    <div className="funnel-label">
+                      {step.label}
+                    </div>
+                  </div>
+
+                  {index < funnel.length - 1 && (
+                    <div className="funnel-arrow">
+                      →
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="panel-header">
+              <div>
+                <p className="eyebrow">
+                  DECISION MIX
+                </p>
+
+                <h2>
+                  Next-best actions selected
+                </h2>
+              </div>
+            </div>
+
+            <div className="action-mix">
+              {Object.entries(actionMix).length === 0 ? (
+                <div className="empty-state">
+                  No actions yet.
+                </div>
+              ) : (
+                Object.entries(actionMix).map(
+                  ([action, count]) => (
+                    <div
+                      className="mix-row"
+                      key={action}
+                    >
+                      <span className="mix-action">
+                        {action.replace("_", " ")}
+                      </span>
+
+                      <div className="mix-bar">
+                        <div
+                          className="mix-fill"
+                          style={{
+                            width: `${Math.min(
+                              (count / actions.length) *
+                                100,
+                              100,
+                            )}%`,
+                          }}
+                        />
+                      </div>
+
+                      <span className="mix-count">
+                        {count}
+                      </span>
+                    </div>
+                  ),
+                )
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* LIVE DECISION ENGINE */}
         <section className="console-grid">
           <div className="panel">
             <div className="panel-header">
               <div>
-                <p className="eyebrow">LIVE DECISION ENGINE</p>
-                <h2>Analyze failed payment</h2>
+                <p className="eyebrow">
+                  LIVE DECISION ENGINE
+                </p>
+
+                <h2>
+                  Analyze failed payment
+                </h2>
               </div>
             </div>
 
@@ -269,7 +409,9 @@ function App() {
               onSubmit={analyzeRecovery}
             >
               <div className="field">
-                <label>Transaction ID</label>
+                <label>
+                  Transaction ID
+                </label>
 
                 <input
                   value={form.transaction_id}
@@ -284,7 +426,9 @@ function App() {
 
               <div className="form-row">
                 <div className="field">
-                  <label>Amount (₹)</label>
+                  <label>
+                    Amount (₹)
+                  </label>
 
                   <input
                     type="number"
@@ -303,7 +447,9 @@ function App() {
                 </div>
 
                 <div className="field">
-                  <label>Payment method</label>
+                  <label>
+                    Payment method
+                  </label>
 
                   <select
                     value={form.payment_method}
@@ -314,18 +460,29 @@ function App() {
                       )
                     }
                   >
-                    <option value="upi">UPI</option>
-                    <option value="card">Card</option>
+                    <option value="upi">
+                      UPI
+                    </option>
+
+                    <option value="card">
+                      Card
+                    </option>
+
                     <option value="netbanking">
                       Netbanking
                     </option>
-                    <option value="wallet">Wallet</option>
+
+                    <option value="wallet">
+                      Wallet
+                    </option>
                   </select>
                 </div>
               </div>
 
               <div className="field">
-                <label>Failure reason</label>
+                <label>
+                  Failure reason
+                </label>
 
                 <select
                   value={form.failure_code}
@@ -386,11 +543,17 @@ function App() {
             </form>
           </div>
 
+          {/* DECISION PANEL */}
           <div className="panel decision-panel">
             <div className="panel-header">
               <div>
-                <p className="eyebrow">REVIVE DECISION</p>
-                <h2>Next-best action</h2>
+                <p className="eyebrow">
+                  REVIVE DECISION
+                </p>
+
+                <h2>
+                  Next-best action
+                </h2>
               </div>
             </div>
 
@@ -401,8 +564,9 @@ function App() {
                 </div>
 
                 <p>
-                  Submit a failed payment to run diagnosis,
-                  recovery prediction, and policy evaluation.
+                  Submit a failed payment to run
+                  diagnosis, recovery prediction, and
+                  policy evaluation.
                 </p>
               </div>
             ) : (
@@ -504,6 +668,7 @@ function App() {
                   )}
                 </div>
 
+                {/* EXECUTION CONTROL */}
                 <div className="execution-box">
                   <div className="mini-label">
                     EXECUTION CONTROL
@@ -512,8 +677,8 @@ function App() {
                   {canExecutePaymentLink ? (
                     <>
                       <p>
-                        Revive selected a Payment Link
-                        as the bounded recovery
+                        Revive selected a Payment
+                        Link as the bounded recovery
                         intervention.
                       </p>
 
@@ -583,11 +748,17 @@ function App() {
           </div>
         </section>
 
+        {/* RECOVERY QUEUE */}
         <section className="panel">
           <div className="panel-header">
             <div>
-              <p className="eyebrow">RECOVERY QUEUE</p>
-              <h2>Recent recovery actions</h2>
+              <p className="eyebrow">
+                RECOVERY QUEUE
+              </p>
+
+              <h2>
+                Recent recovery actions
+              </h2>
             </div>
 
             <span className="panel-count">
@@ -604,11 +775,25 @@ function App() {
               <table>
                 <thead>
                   <tr>
-                    <th>Transaction</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                    <th>Expected Recovery</th>
-                    <th>Status</th>
+                    <th>
+                      Transaction
+                    </th>
+
+                    <th>
+                      Amount
+                    </th>
+
+                    <th>
+                      Action
+                    </th>
+
+                    <th>
+                      Expected Recovery
+                    </th>
+
+                    <th>
+                      Status
+                    </th>
                   </tr>
                 </thead>
 
@@ -626,7 +811,9 @@ function App() {
                       </td>
 
                       <td>
-                        {formatRupees(item.amount_paise)}
+                        {formatRupees(
+                          item.amount_paise,
+                        )}
                       </td>
 
                       <td>
