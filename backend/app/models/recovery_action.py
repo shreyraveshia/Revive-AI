@@ -62,6 +62,13 @@ class RecoveryAction(Base):
         index=True,
     )
 
+    external_reference: Mapped[str | None] = mapped_column(
+    String(255),
+    nullable=True,
+    unique=True,
+    index=True,
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.utcnow,

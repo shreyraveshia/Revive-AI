@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
+from app.webhooks.routes import router as webhook_router
 from app.core.config import get_settings
 from app.db.session import engine
 
@@ -12,6 +13,8 @@ app = FastAPI(
     version="0.1.0",
     description="AI-powered revenue recovery decision engine.",
 )
+
+app.include_router(webhook_router)
 
 
 @app.get("/health")
