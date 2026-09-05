@@ -12,3 +12,4 @@ lightgbm
 httpx
 pytest
 pytest-asyncio
+alembic
