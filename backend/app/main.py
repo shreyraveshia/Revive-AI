@@ -4,6 +4,7 @@ from sqlalchemy import text
 from app.webhooks.routes import router as webhook_router
 from app.core.config import get_settings
 from app.db.session import engine
+from app.api.routes import router as api_router
 
 
 settings = get_settings()
@@ -15,7 +16,7 @@ app = FastAPI(
 )
 
 app.include_router(webhook_router)
-
+app.include_router(api_router)
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
