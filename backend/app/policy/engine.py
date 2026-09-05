@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from app.decision.engine import ActionScore, choose_best_action
 from app.policy.rules import (
-    MIN_CONFIDENCE_FOR_ACTION,
     MIN_EXPECTED_VALUE_PAISE,
     is_action_allowed,
 )
@@ -25,12 +24,11 @@ def apply_policy(
     failure_code: str,
 ) -> PolicyResult:
     """
-    Apply deterministic policy before selecting the final action.
+    Apply deterministic safety/eligibility rules and then
+    optimize expected economic value.
     """
 
     eligible_probabilities: dict[str, float] = {}
-
-    blocked_reasons: dict[str, str] = {}
 
     for action, probability in action_probabilities.items():
         policy = is_action_allowed(
@@ -41,19 +39,11 @@ def apply_policy(
         )
 
         if not policy.allowed:
-            blocked_reasons[action] = policy.reason
-            continue
-
-        if (
-            action != "no_action"
-            and probability < MIN_CONFIDENCE_FOR_ACTION
-        ):
-            blocked_reasons[action] = "below_confidence_threshold"
             continue
 
         eligible_probabilities[action] = probability
 
-    # NO_ACTION is our deterministic safety fallback.
+    # Deterministic safety fallback.
     if not eligible_probabilities:
         return PolicyResult(
             selected_action="no_action",
@@ -68,6 +58,7 @@ def apply_policy(
 
     selected_score = decision.scores[0]
 
+    # Only the economic threshold can force NO_ACTION.
     if (
         selected_score.expected_value_paise
         < MIN_EXPECTED_VALUE_PAISE
